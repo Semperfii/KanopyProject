@@ -1,39 +1,20 @@
-from flask_script import Manager
-from flask_migrate import Migrate, MigrateCommand
-from api import create_app
-from api.models import db
 
-# sets up the app
-app = create_app()
+# Set the path
+import os, sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from flask_script import Manager, Server
+from app import app
 
 manager = Manager(app)
-migrate = Migrate(app, db)
 
-# adds the python manage.py db init, db migrate, db upgrade commands
-manager.add_command("db", MigrateCommand)
-
-
-@manager.command
-def runserver():
-    app.run(debug=True, host="0.0.0.0", port=5000)
-
-
-@manager.command
-def runworker():
-    app.run(debug=False)
-
-
-@manager.command
-def recreate_db():
-    """
-    Recreates a database. This should only be used once
-    when there's a new database instance. This shouldn't be
-    used when you migrate your database.
-    """
-    db.drop_all()
-    db.create_all()
-    db.session.commit()
-
+# Turn on debugger by default and reloader
+manager.add_command("runserver", Server(
+    use_debugger=True,
+    use_reloader=True,
+    host='0.0.0.0',
+    port=5000
+))
 
 if __name__ == "__main__":
     manager.run()

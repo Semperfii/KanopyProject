@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      {% if title %}
+      <title>{{ title }} - Reports</title>
+      {% else %}
+      <title>Welcome to the Reports</title>
+      {% endif %}
+    </head>
+    <body>
+        <div>Menu: 
+            <a href="/reports/authors_commits">Authors Report</a>
+            <a href="/reports/dates_commits">Dates Report</a>
+            <a href="/reports/">Home</a>
+        </div>
+            <form id="package_form" action="" method="post">
+                <div>
+                    <input type ="submit" name="action" value="Get data">
+                </div>
+            </form>
+        <hr>
+        {% block content %}{% endblock %}
+    </body>
+</html>

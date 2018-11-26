@@ -1,26 +1,27 @@
-version: '3.7'
+version: '2'
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile-dev
+  web:
+    build: .
     ports:
-      - "80:80"
+      - "5000:5000"
     links:
-      - db
+      - db:mysql
+    container_name: app_web_1
     depends_on:
       - db
     volumes:
-      - .:/app
-    entrypoint:
-      - /app/docker_script.sh
+      - my-webvolume:/var/lib/web
+    environment:
+      - "PYTHONUNBUFFERED:0"
   db:
     image: mysql:5.7
-    build: db/.
-    volumes:
-      - ./db:/docker-entrypoint-initdb.d/:ro
+    restart: always
+    container_name: app_db_1
     environment:
-      - MYSQL_ROOT_PASSWORD={POSTGRES_ROOT_PASSWORD}
-      - MYSQL_USER=${POSTGRES_USER}
-      - MYSQL_PASSWORD=${POSTGRES_PASSWORD}
-      - MYSQL_DB=${POSTGRES_DB}
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: database
+    volumes:
+      - my-datavolume:/var/lib/mysql
+volumes:
+  my-datavolume:
+  my-webvolume:

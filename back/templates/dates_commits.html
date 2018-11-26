@@ -1,0 +1,19 @@
+{% extends "home.html" %}
+
+{% block content %}
+<h1>Report</h1>
+    <form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <p> Begin Date :
+            {{ form.begin_date(class='datepicker') }}
+            {{ form.hidden_tag() }}
+        </p>
+        <p> End Date :
+            {{ form.end_date(class='datepicker') }}
+            {{ form.hidden_tag() }}
+        </p>
+        Download the CSV report : All the commits made between two given dates
+        </br>
+        <p>{{ form.submit() }}</p>
+    </form>
+{% endblock %}
