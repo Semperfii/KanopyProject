@@ -10,7 +10,7 @@ To install the project, run in the directory :
 docker-compose up --build
 ```
 
-To initialize the database, run :
+To initialize the database (once the docker is built) run :
 
 ```
 docker exec -it app_web_1 python dbinit.py
@@ -34,7 +34,7 @@ can be downloaded from the web app. The button ```Get Data``` is used to get the
 
 I used only Python - with a few HTML -  to make this project.
 
-First of all, I focused on retrieving the data from the Github API, and processing it to be able to store it in a database. I chose to get the essential data from each commit (sha, url, comment count, date, author name & email, committer name & email). However I realized that the rate limit of 60 API requests per hour limited the maximum amount of commits retrieved to 6000 (maximum 100 per page). Some months from last year exceeded these 6000 commits. That is why, in order to have  relevant monthly insights, I chose to also get the data from ```https://api.github.com/repos/torvalds/linux/stats/commit_activity``` : number of daily commits during the previous year. The only - minor - drawback is that is does not include the merge commits.
+First of all, I focused on retrieving the data from the Github API, and processing it to be able to store it in a database. I chose to get the essential data from each commit (sha, url, comment count, date, author name & email, committer name & email). However I realized that the rate limit of 60 API requests per hour limited the maximum amount of commits retrieved to 6000 (maximum 100 per page). Some months from last year exceeded these 6000 commits. That is why, in order to have  relevant monthly insights, I chose to only get the last 2000 commits and also get the data from ```https://api.github.com/repos/torvalds/linux/stats/commit_activity``` : number of daily commits during the previous year. The only - minor - drawback is that is does not include the merge commits.
 
 
 Then I created a server using Flask in order to have a user-friendly interface for the project. I chose to use a MySQL database to store the data from the commits, because it is a reliable and very popular option, although it is very similar to PostgreSQL. Then I dockerized both the web app and the database and created a script initializing the database from the models stored in ```models.py```. 

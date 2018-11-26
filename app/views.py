@@ -17,6 +17,7 @@ duration_day_ms = 86400
 this_month = datetime.utcfromtimestamp(int(time.time())).strftime('%Y-%m-%d %H:%M:%S')
 last_month = datetime.utcfromtimestamp(int(time.time()) - 31*duration_day_ms).strftime('%Y-%m-%d %H:%M:%S')
 
+# Create the csv file and download it
 def getCsv(data, header, file_name):
     si = StringIO()
     cw = csv.writer(si)
@@ -27,35 +28,36 @@ def getCsv(data, header, file_name):
     output.headers["Content-type"] = "text/csv"
     return output
 
+# Get the data from the Github API
 def getData():
     repo = 'torvalds/linux'
     # Add the data from commits
     per_page = 100
-    page = 1
-    r = requests.get('https://api.github.com/repos/{0}/commits?per_page={1}&page={2}'.format(repo, per_page, page)).json()
-    
-    keys = ['sha', 'commit']
-    data = [{x:r[i][x] for x in keys} for i in range(per_page)]
-    df = pd.io.json.json_normalize(data)
-    df = df[['sha', 'commit.url', 'commit.comment_count', 'commit.author.name', 'commit.author.email', 'commit.author.date', 'commit.committer.name', 'commit.committer.email']].rename(columns=
-    {
-        'commit.url': 'url',
-        'commit.comment_count': 'comment_count',
-        'commit.author.name': 'author_name',
-        'commit.author.email': 'author_email',
-        'commit.author.date': 'date',
-        'commit.committer.name': 'committer_name',
-        'commit.committer.email': 'committer_email'
-    })
-    # We use a temporary table to be able to update the data in the commit table
-    df.to_sql(name='tempTable', con=db.engine, index=False, if_exists='replace')
-    sql = """INSERT INTO commit (sha, url, comment_count, author_name, author_email, committer_name, committer_email, date)
-    SELECT t.sha, t.url, t.comment_count, t.author_name, t.author_email, t.committer_name, t.committer_email, t.date
-    FROM tempTable t
-    WHERE NOT EXISTS 
-        (SELECT 1 FROM commit f
-            WHERE t.sha = f.sha)"""
-    db.engine.execute(sql)
+    pages = 20
+    for i in range(pages):
+        r = requests.get('https://api.github.com/repos/{0}/commits?per_page={1}&page={2}'.format(repo, per_page, i+1)).json()
+        keys = ['sha', 'commit']
+        data = [{x:r[i][x] for x in keys} for i in range(per_page)]
+        df = pd.io.json.json_normalize(data)
+        df = df[['sha', 'commit.url', 'commit.comment_count', 'commit.author.name', 'commit.author.email', 'commit.author.date', 'commit.committer.name', 'commit.committer.email']].rename(columns=
+        {
+            'commit.url': 'url',
+            'commit.comment_count': 'comment_count',
+            'commit.author.name': 'author_name',
+            'commit.author.email': 'author_email',
+            'commit.author.date': 'date',
+            'commit.committer.name': 'committer_name',
+            'commit.committer.email': 'committer_email'
+        })
+        # We use a temporary table to be able to update the data in the commit table
+        df.to_sql(name='tempTable', con=db.engine, index=False, if_exists='replace')
+        sql = """INSERT INTO commit (sha, url, comment_count, author_name, author_email, committer_name, committer_email, date)
+        SELECT t.sha, t.url, t.comment_count, t.author_name, t.author_email, t.committer_name, t.committer_email, t.date
+        FROM tempTable t
+        WHERE NOT EXISTS 
+            (SELECT 1 FROM commit f
+                WHERE t.sha = f.sha)"""
+        db.engine.execute(sql)
     # Add the daily commits data
     r2 = requests.get('https://api.github.com/repos/{0}/stats/commit_activity'.format(repo)).json()
     week_days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
