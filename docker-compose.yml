@@ -1,0 +1,26 @@
+version: '3.7'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile-dev
+    ports:
+      - "80:80"
+    links:
+      - db
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+    entrypoint:
+      - /app/docker_script.sh
+  db:
+    image: mysql:5.7
+    build: db/.
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d/:ro
+    environment:
+      - MYSQL_ROOT_PASSWORD={POSTGRES_ROOT_PASSWORD}
+      - MYSQL_USER=${POSTGRES_USER}
+      - MYSQL_PASSWORD=${POSTGRES_PASSWORD}
+      - MYSQL_DB=${POSTGRES_DB}
