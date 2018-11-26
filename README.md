@@ -72,9 +72,9 @@ The next thing I would have done if I had the time would be to add other paramet
 * Average number of commits each time slot of the day ( 12am - 5am, 5am - 10am, 10am - 12pm, 12pm - 2pm, 2pm - 5pm, 5pm - 8pm, 8pm - 12am)
 * Authors with most commits in the current month compared to the previous month
 
-### Including more data in the database
+### Using the message data
 
-I did not include the commits messages in the database because I had issue with utf8 encoding at first for only a few commits. However this issue could be solved and one could had this data to the database.
+At first I had a hard time including the message data in the database because of a wrong utf8 encoding. I finally could get the messages, however I chose not to put them in the report for greater clearity. But this data could be very valuable, and another analysis could be performed directly on it !
 
 ### Github authentication
 

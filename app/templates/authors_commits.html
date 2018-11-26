@@ -13,7 +13,7 @@
     var pieData = [
         {% for value, label, color in set %}
     {
-        value: { { value } },
+        value: {{value}},
         label: "{{label}}",
             color: "{{color}}"
     },

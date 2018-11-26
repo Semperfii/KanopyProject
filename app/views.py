@@ -39,9 +39,10 @@ def getData():
         keys = ['sha', 'commit']
         data = [{x:r[i][x] for x in keys} for i in range(per_page)]
         df = pd.io.json.json_normalize(data)
-        df = df[['sha', 'commit.url', 'commit.comment_count', 'commit.author.name', 'commit.author.email', 'commit.author.date', 'commit.committer.name', 'commit.committer.email']].rename(columns=
+        df = df[['sha', 'commit.url', 'commit.message', 'commit.comment_count', 'commit.author.name', 'commit.author.email', 'commit.author.date', 'commit.committer.name', 'commit.committer.email']].rename(columns=
         {
             'commit.url': 'url',
+            'commit.message': 'message',
             'commit.comment_count': 'comment_count',
             'commit.author.name': 'author_name',
             'commit.author.email': 'author_email',
@@ -49,10 +50,13 @@ def getData():
             'commit.committer.name': 'committer_name',
             'commit.committer.email': 'committer_email'
         })
+        df.author_name = df.author_name.str.encode('utf-8')
+        df.message = df.message.str.encode('utf-8')
+        df.committer_name = df.message.str.encode('utf-8')
         # We use a temporary table to be able to update the data in the commit table
         df.to_sql(name='tempTable', con=db.engine, index=False, if_exists='replace')
-        sql = """INSERT INTO commit (sha, url, comment_count, author_name, author_email, committer_name, committer_email, date)
-        SELECT t.sha, t.url, t.comment_count, t.author_name, t.author_email, t.committer_name, t.committer_email, t.date
+        sql = """INSERT INTO commit (sha, url, message, comment_count, author_name, author_email, committer_name, committer_email, date)
+        SELECT t.sha, t.url, t.message, t.comment_count, t.author_name, t.author_email, t.committer_name, t.committer_email, t.date
         FROM tempTable t
         WHERE NOT EXISTS 
             (SELECT 1 FROM commit f
@@ -129,7 +133,7 @@ def dates():
     reportForm = ReportForm()
     dataForm = DataForm()
     if reportForm.submit.data:
-        sql_query = """SELECT * FROM commit WHERE date >= '{0}' AND date <= '{1}' """.format(reportForm.begin_date.data, reportForm.end_date.data)
+        sql_query = """SELECT sha, url, comment_count, author_name, author_email, committer_name, committer_email, date FROM commit WHERE date >= '{0}' AND date <= '{1}' ORDER BY date ASC""".format(reportForm.begin_date.data, reportForm.end_date.data)
         data = db.engine.execute(sql_query)
         header = ['Sha', 'Url', 'Comment Count', 'Author Name', 'Author Email', 'Committer Name', 'Committer Email', 'Date']
         file_name='date_report'

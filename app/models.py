@@ -3,11 +3,12 @@ from app import db
 class Commit(db.Model):
     sha = db.Column(db.String(100), primary_key=True)
     url = db.Column(db.String(100))
+    message = db.Column(db.Text)
     comment_count = db.Column(db.Integer)
-    author_name = db.Column(db.String(40))
-    author_email = db.Column(db.String(40))
-    committer_name = db.Column(db.String(40))
-    committer_email = db.Column(db.String(40))
+    author_name = db.Column(db.String(100))
+    author_email = db.Column(db.String(100))
+    committer_name = db.Column(db.String(100))
+    committer_email = db.Column(db.String(100))
     date = db.Column(db.String(50))
 
     def __repr__(self):
