@@ -11,3 +11,6 @@ class ReportForm(FlaskForm):
     average_commits = BooleanField('Average Commits')
     daily_commits = BooleanField('Daily Commits')
     submit = SubmitField('Download')
+
+class DataForm(FlaskForm):
+    get_data = SubmitField('Get Data')

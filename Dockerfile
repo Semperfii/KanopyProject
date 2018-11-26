@@ -3,10 +3,10 @@ FROM python:3.7
 ## make a local directory
 RUN mkdir /app
 
-# set "counter_app" as the working directory from which CMD, RUN, ADD references
+# set "app" as the working directory from which CMD, RUN, ADD references
 WORKDIR /app
 
-# now copy all the files in this directory to /counter_app
+# now copy all the files in this directory to /app
 ADD . .
 
 # pip install the local requirements.txt
