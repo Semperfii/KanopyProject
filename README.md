@@ -81,6 +81,14 @@ At first I had a hard time including the message data in the database because of
 
 More commits could be retrieved from the Github API with a valid oauth tocken (the rate limit would be 5000 requests per hour).
 
+### Updating the data automatically
+
+As suggested in the bonus section, a new feature could be  an automated update of the the data (periodically).
+
+### Authors table
+
+If I had the time, I could also have created a table for the authors in the database, storing revelant data like their login or their avatar_url. However one the main main issues would be to deal with the incomplete data (the author or committer fields - not commit.author and commit.committer - are sometimes missing).
+
 
 
 
