@@ -24,7 +24,7 @@ The website is available at ```localhost:5000```.
 
 All the csv reports :
 * All the commits made between two given dates
-* Number of commits made by each author
+* Number of commits made by each author (here based on the 2000 last commits)
 * Number of average commits each week day of the current month
 * Cumulative commits made daily during the current month
 
