@@ -52,7 +52,7 @@ def getData():
         })
         df.author_name = df.author_name.str.encode('utf-8')
         df.message = df.message.str.encode('utf-8')
-        df.committer_name = df.message.str.encode('utf-8')
+        df.committer_name = df.committer_name.str.encode('utf-8')
         # We use a temporary table to be able to update the data in the commit table
         df.to_sql(name='tempTable', con=db.engine, index=False, if_exists='replace')
         sql = """INSERT INTO commit (sha, url, message, comment_count, author_name, author_email, committer_name, committer_email, date)
