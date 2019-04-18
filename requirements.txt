@@ -1,4 +1,4 @@
-Flask==0.11
+flask>=0.12.3
 PyMySQL==0.7.4
 Flask-SQLAlchemy==2.1
 Pandas
